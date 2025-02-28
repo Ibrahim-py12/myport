@@ -70,8 +70,9 @@ st.subheader("Projects")
 st.write(
     """
 - **AI-Based To-Do List** – A smart task manager with priority sorting, deadlines, and user-specific task storage, featuring Google authentication for secure access.
-- Automated Web Scraper & Data Visualizer** – A tool that extracts, processes, and visualizes web data using BeautifulSoup, Selenium, Pandas, and Streamlit.
+- **Automated Web Scraper & Data Visualizer** – A tool that extracts, processes, and visualizes web data using BeautifulSoup, Selenium, Pandas, and Streamlit.
 - **Robotics Integration:** Engineered AI-driven solutions to enhance robotic operations, integrating hardware with intelligent decision-making processes.
     """
 )
 
+# git push origin main
