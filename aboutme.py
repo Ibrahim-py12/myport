@@ -69,8 +69,8 @@ st.header("Experience & Projects")
 st.subheader("Projects")
 st.write(
     """
-- **Face Detection System:** Developed a robust system using advanced computer vision techniques for real-time face detection and recognition.
-- **Intelligent Automation Tool:** Built an automation tool leveraging Python to streamline repetitive tasks across various industries.
+- **AI-Based To-Do List** – A smart task manager with priority sorting, deadlines, and user-specific task storage, featuring Google authentication for secure access.
+- Automated Web Scraper & Data Visualizer** – A tool that extracts, processes, and visualizes web data using BeautifulSoup, Selenium, Pandas, and Streamlit.
 - **Robotics Integration:** Engineered AI-driven solutions to enhance robotic operations, integrating hardware with intelligent decision-making processes.
     """
 )
