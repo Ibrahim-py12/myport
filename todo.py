@@ -1,16 +1,18 @@
 import streamlit as st
 import sqlite3
+import sqlite3
 
 st.title("📌 AI-Based To-Do List")
 
-# ➤ **Connect to SQLite (Prevents database locking issue)**
+# ➤ **Connect to SQLite**
 conn = sqlite3.connect("tasks.db", check_same_thread=False)
 c = conn.cursor()
 
-# Create tasks table if it doesn't exist
+# Create user-specific tasks table
 c.execute('''
     CREATE TABLE IF NOT EXISTS tasks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user TEXT NOT NULL,  -- 🆕 Store username
         task TEXT NOT NULL,
         priority TEXT CHECK(priority IN ('High', 'Medium', 'Low')) DEFAULT 'Medium',
         deadline TEXT,
@@ -20,23 +22,28 @@ c.execute('''
 ''')
 conn.commit()
 
-# ➤ **Show Saved Tasks**
-with st.expander("📋 See Saved Tasks"):
-    c.execute("SELECT * FROM tasks")
+# ➤ **Ask for Username**
+user = st.text_input("Enter your username:", key="username")
+if not user:
+    st.warning("⚠️ Please enter your username to continue.")
+    st.stop()  # Stop execution if username is not provided
+
+# ➤ **Show Saved Tasks for the User**
+with st.expander("📋 See Your Tasks"):
+    c.execute("SELECT * FROM tasks WHERE user=?", (user,))
     tasks = c.fetchall()
 
     if tasks:
         for task in tasks:
-            col1, col2 = st.columns([4, 1])  # Create layout
+            col1, col2, col3 = st.columns([4, 1, 1])
             with col1:
-                st.write(
-                    f"📝 **{task[1]}** | 🔥 Priority: `{task[2]}` | 📅 Due Date: `{task[3]}` | ⏳ Due Time: `{task[5]}` | ✅ Status: `{task[4]}`")
-                if st.button("✅ Complete", key=task[0]):
+                st.write(f"📝 **{task[1]}** | 🔥 `{task[2]}` | 📅 `{task[3]}` | ⏳ `{task[5]}` | ✅ `{task[4]}`")
+            with col2:
+                if st.button("✅ Complete", key=f"comp{task[0]}"):
                     c.execute("UPDATE tasks SET status='Completed' WHERE id=?", (task[0],))
                     conn.commit()
                     st.rerun()
-
-            with col2:
+            with col3:
                 if st.button("🗑️ Delete", key=f"del{task[0]}"):
                     c.execute("DELETE FROM tasks WHERE id=?", (task[0],))
                     conn.commit()
@@ -44,17 +51,15 @@ with st.expander("📋 See Saved Tasks"):
     else:
         st.info("No tasks available.")
 
-
-# ➤ **Clear All Tasks**
-if st.button("🗑️ Clear All Tasks"):
-    c.execute("DELETE FROM tasks")  # Deletes all rows but keeps table
+# ➤ **Clear All Tasks for the Current User**
+if st.button("🗑️ Clear My Tasks"):
+    c.execute("DELETE FROM tasks WHERE user=?", (user,))
     conn.commit()
-    st.warning("⚠️ All tasks have been deleted!")
-    st.rerun()  # Refresh UI
+    st.warning("⚠️ All your tasks have been deleted!")
+    st.rerun()
 
 # ➤ **Expander for Adding a New Task**
 with st.expander("➕ Add a New Task"):
-    # Initialize session state for text input
     if "task_input" not in st.session_state:
         st.session_state.task_input = ""
 
@@ -67,8 +72,8 @@ with st.expander("➕ Add a New Task"):
         if not task.strip():
             st.error("⚠️ Task name cannot be empty!")
         else:
-            c.execute("INSERT INTO tasks (task, priority, deadline, time, status) VALUES (?, ?, ?, ?, 'Pending')",
-                      (task, pri, str(deadline), str(time)))
+            c.execute("INSERT INTO tasks (user, task, priority, deadline, time, status) VALUES (?, ?, ?, ?, ?, 'Pending')",
+                      (user, task, pri, str(deadline), str(time)))
             conn.commit()
             st.success("✅ Task Added Successfully!")
 
