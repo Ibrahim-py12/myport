@@ -13,15 +13,15 @@ pr1 = st.Page(
     title = "Automated WecScrapper",
 
 )
-#
-# pr2 = st.Page(
-#     page="mathgesai.py",
-#     title="Math Gesture AI"
-#
-#
-# )
 
-pg = st.navigation(pages=[about_page,pr1])
+pr2 = st.Page(
+    page="todo.py",
+    title="TO-DO",
+
+
+)
+
+pg = st.navigation(pages=[about_page,pr1,pr2])
 
 pg.run()
 
