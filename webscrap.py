@@ -15,7 +15,13 @@ if url:
     soup =BeautifulSoup(responce.text,'html.parser')
     headings = [h2.text.strip() for h2 in soup.find_all("h2")]
     contents = [p.text.strip() for p in soup.find_all("p")[:len(headings)]]  # Ensure same length
-
+    st.write("Number of headings:", len(headings))
+    st.write("Number of contents:", len(contents))
+    # Ensure both lists have the same length
+    if len(contents) < len(headings):
+        contents.extend(["No content available"] * (len(headings) - len(contents)))
+    elif len(contents) > len(headings):
+        contents = contents[:len(headings)]  # Trim extra content
     # Convert to DataFrame
     df = pd.DataFrame({"Title": headings, "Content": contents})
 
